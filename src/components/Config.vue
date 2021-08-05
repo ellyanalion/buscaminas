@@ -1,59 +1,64 @@
 <template lang="pug">
-  div
-    h2 Ajustes
-    h3 {{mines/area}} Dificultad  
-    br
-    br
-    input#dificulty( type="range" min="10" max="40" )
-    span {{dificulty}} %
-    br
-    br
-    h3 Filas
-    br
-    input#rows(type="number" placeholder="filas" min="10" max="1000" )
-    br
-    h3 Columnas
-    br
-    input#columns(type="number" placeholder="columnas" min="10" max="1000" )
-    br
-    button(@click="newGame()") Iniciar juego
+.config
+  h2 Ajustes
+  label Dificultad
+  .mb-3
+    .option(@click="dificulty = 'easy'" :class="{ active: dificulty == 'easy'}") Facil
+    .option(@click="dificulty = 'medium'" :class="{ active: dificulty == 'medium'}") Medio
+    .option(@click="dificulty = 'hard'" :class="{ active: dificulty == 'hard'}") Dificil
+  
+  .mb-3
+    div Cantidad de minas: {{mines}}
+    div Tamaño del tablero: {{size}} x {{size}}
+
+  button(@click="newGame()") Iniciar juego
 </template>
 
 <script>
 
 export default {
-  props:{
-  },
-  computed:{
-    area () {
-      return this.dataRows * this.dataColumns
-    },
-    dificulty () {
-      return 100 * this.mines / this.area
-    }
-  },
   data () {
     return {
-      }
+      dificulty: 'easy'
+    }
+  },
+  computed:{
+    size () {
+      if (this.dificulty === 'easy') return 10
+      if (this.dificulty === 'medium') return 15
+      return 20
+    },
+    mines () {
+      if (this.dificulty === 'easy') return 10
+      if (this.dificulty === 'medium') return 50
+      return 200
+    }
   },
   methods:{
-    config () {
-      this.columns = document.getElementById("columns").value,
-      this.rows = document.getElementById("rows").value,
-      this.mines = document.getElementById("dificulty").value
-      
+    newGame () {
+      this.$emit('initGame', {
+        size: this.size,
+        mines: this.mines,
+      })
     }   
   }
 }
 </script>
 
 <style scoped>
-
-input {
-  width: 200px;
-  height: 30px;
-  border-radius: 8px;
-  margin-bottom: 15px;
+.config {
+  background-color: white;
 }
 
+.option {
+  cursor: pointer;
+}
+
+.option.active {
+  font-weight: bold;
+}
+
+button {
+  background-color: red;
+}
 </style>
